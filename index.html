@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login & Daftar</title>
+  <link rel="icon" type="image/png" href="https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=v7AY0CbOjiCwNo8uIH8UBg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=228.58392&pitch=0&thumbfov=100">
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #74ebd5, #ACB6E5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .switch {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+    }
+    .switch a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    .switch a:hover {
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container">
+    <div id="formLogin">
+      <h2>Login</h2>
+      <input type="text" id="loginNama" placeholder="Nama">
+      <input type="text" id="loginAlamat" placeholder="Alamat">
+      <input type="text" id="loginTelepon" placeholder="No. Telepon">
+      <button onclick="login()">Masuk</button>
+      <div class="switch">Belum punya akun? <a href="#" onclick="toggleForm('daftar')">Daftar</a></div>
+      <div class="switch"><a href="#" onclick="toggleForm('lupa')">Lupa Password?</a></div>
+    </div>
+
+    <div id="formDaftar" class="hidden">
+      <h2>Daftar</h2>
+      <input type="text" id="daftarNama" placeholder="Nama">
+      <input type="text" id="daftarAlamat" placeholder="Alamat">
+      <input type="number" id="daftarUmur" placeholder="Umur">
+      <input type="text" id="daftarTelepon" placeholder="No. Telepon">
+      <button onclick="daftar()">Daftar</button>
+      <div class="switch">Sudah punya akun? <a href="#" onclick="toggleForm('login')">Login</a></div>
+    </div>
+
+    <div id="formLupa" class="hidden">
+      <h2>Reset Password</h2>
+      <input type="text" id="resetNama" placeholder="Nama">
+      <input type="text" id="resetAlamat" placeholder="Alamat">
+      <input type="text" id="resetTeleponBaru" placeholder="No. Telepon Baru">
+      <button onclick="resetPassword()">Ubah Nomor</button>
+      <div class="switch"><a href="#" onclick="toggleForm('login')">Kembali ke Login</a></div>
+    </div>
+  </div>
+
+  <script>
+    const akunTerdaftar = [];
+
+    function toggleForm(target) {
+      document.getElementById('formLogin').classList.add('hidden');
+      document.getElementById('formDaftar').classList.add('hidden');
+      document.getElementById('formLupa').classList.add('hidden');
+
+      document.getElementById(`form${target.charAt(0).toUpperCase() + target.slice(1)}`).classList.remove('hidden');
+    }
+
+    function daftar() {
+    const nama = document.getElementById('daftarNama').value;
+    const alamat = document.getElementById('daftarAlamat').value;
+    const umur = document.getElementById('daftarUmur').value;
+    const telepon = document.getElementById('daftarTelepon').value;
+
+    if (!nama || !alamat || !umur || !telepon) {
+        alert("Harap lengkapi semua data.");
+        return;
+    }
+
+    const user = { nama, alamat, umur, telepon };
+    localStorage.setItem("user_" + nama, JSON.stringify(user));
+
+    alert("Pendaftaran berhasil. Silakan login.");
+    // Kosongkan input
+    document.getElementById('daftarNama').value = '';
+    document.getElementById('daftarAlamat').value = '';
+    document.getElementById('daftarUmur').value = '';
+    document.getElementById('daftarTelepon').value = '';
+}
+
+function login() {
+  const nama = document.getElementById('loginNama').value.trim();
+  const alamat = document.getElementById('loginAlamat').value.trim();
+  const telepon = document.getElementById('loginTelepon').value.trim();
+
+  const userData = localStorage.getItem("user_" + nama);
+  if (!userData) {
+    alert("Akun tidak ditemukan. Silakan daftar dulu.");
+    return;
+  }
+
+  const user = JSON.parse(userData);
+  if (user.alamat === alamat && user.telepon === telepon) {
+    alert("Login berhasil! Selamat datang " + user.nama);
+    window.location.href = "input.html";
+  } else {
+    alert("Login gagal. Data tidak cocok.");
+  }
+}
+
+
+function resetPassword() {
+  const nama = document.getElementById('resetNama').value.trim();
+  const alamat = document.getElementById('resetAlamat').value.trim();
+  const teleponBaru = document.getElementById('resetTeleponBaru').value.trim();
+
+  const userData = localStorage.getItem("user_" + nama);
+  if (!userData) {
+    alert("Pengguna tidak ditemukan.");
+    return;
+  }
+
+  const user = JSON.parse(userData);
+  if (user.alamat === alamat) {
+    user.telepon = teleponBaru;
+    localStorage.setItem("user_" + nama, JSON.stringify(user));
+    alert("Nomor telepon berhasil diubah. Silakan login kembali.");
+    toggleForm('login');
+  } else {
+    alert("Data tidak cocok. Pastikan nama dan alamat sesuai.");
+  }
+}
+  </script>
+</body>
+</html>

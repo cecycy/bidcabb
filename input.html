@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <link rel="icon" type="image/png" href="https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=v7AY0CbOjiCwNo8uIH8UBg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=228.58392&pitch=0&thumbfov=100">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projek Bidcab</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 12px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td button {
+            margin-right: 5px;
+            background-color: #f39c12;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        td button:last-child {
+            background-color: #e74c3c;
+        }
+
+        td button:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 15px;
+            }
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                padding: 10px;
+            }
+
+            td {
+                padding: 10px;
+                text-align: right;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="section">
+        <h2>Input Data</h2>
+        <input type="text" id="nama" placeholder="Nama">
+        <input type="text" id="alamat" placeholder="Alamat">
+        <input type="number" id="umur" placeholder="Umur">
+        <input type="text" id="telepon" placeholder="No. Telpon">
+        <button onclick="simpanData()">Simpan</button>
+    </div>
+
+    <div class="section">
+        <h2>Daftar Data</h2>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Nama</th>
+                    <th>Alamat</th>
+                    <th>Umur</th>
+                    <th>No Telpon</th>
+                    <th>Edit / Hapus</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let data = [];
+
+        function simpanData() {
+            const nama = document.getElementById('nama').value;
+            const alamat = document.getElementById('alamat').value;
+            const umur = document.getElementById('umur').value;
+            const telepon = document.getElementById('telepon').value;
+
+            if (!nama || !alamat || !umur || !telepon) {
+                alert("Harap lengkapi semua data.");
+                return;
+            }
+
+            data.push({ nama, alamat, umur, telepon });
+            renderTable();
+            document.getElementById('nama').value = '';
+            document.getElementById('alamat').value = '';
+            document.getElementById('umur').value = '';
+            document.getElementById('telepon').value = '';
+        }
+
+        function renderTable() {
+            const tbody = document.querySelector('#dataTable tbody');
+            tbody.innerHTML = '';
+            data.forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td data-label="No.">${index + 1}</td>
+                        <td data-label="Nama">${item.nama}</td>
+                        <td data-label="Alamat">${item.alamat}</td>
+                        <td data-label="Umur">${item.umur}</td>
+                        <td data-label="No Telpon">${item.telepon}</td>
+                        <td data-label="Aksi">
+                            <button onclick="editData(${index})">Edit</button>
+                            <button onclick="hapusData(${index})">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function editData(index) {
+            const item = data[index];
+            document.getElementById('nama').value = item.nama;
+            document.getElementById('alamat').value = item.alamat;
+            document.getElementById('umur').value = item.umur;
+            document.getElementById('telepon').value = item.telepon;
+            data.splice(index, 1);
+            renderTable();
+        }
+
+        function hapusData(index) {
+            data.splice(index, 1);
+            renderTable();
+        }
+    </script>
+</body>
+</html>
